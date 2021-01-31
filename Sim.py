@@ -1,6 +1,7 @@
 import pygame
 import random
 import numpy as np
+import matplotlib.pyplot as plt
 import Objects
 
 
@@ -15,7 +16,7 @@ def populate(width, height):
     people = []
     for i in range(100):
         people.append(Objects.person(width, height, 'safe'))
-    for i in range(10):
+    for i in range(15):
         people.append(Objects.person(width, height, 'ill'))
     return people
 
@@ -54,7 +55,15 @@ def main():
     win = pygame.display.set_mode((width, height))
     people = populate(width, height)
     v = True
+    getInfo = 0
+    getInfoC = 10
+    end = 10000
+    ills = []
+    safes = []
+    deads = []
+    immunes = []
     while v:
+        getInfo = getInfo + 1
         for i in people:
             i.move()
         segment = segmentFinder(people, width, height)
@@ -64,10 +73,46 @@ def main():
                     if transmitionArea(x, g):
                         if g.illness == 'immune' or x.illness == 'immune':
                             pass
+                        elif g.illness == 'dead' or x.illness == 'dead':
+                            pass
                         elif g.illness == 'ill' or x.illness == 'ill':
                             g.illness = 'ill'
                             x.illness = 'ill'
+        if getInfo % getInfoC == 0:
+            ill = 0
+            safe = 0
+            dead = 0
+            immune = 0
+            for i in people:
+                if i.illness == 'ill':
+                    ill = ill+1
+                elif i.illness == 'safe':
+                    safe = safe+1
+                elif i.illness == 'dead':
+                    dead = dead + 1
+                elif i.illness == 'immune':
+                    immune = immune + 1
+            ills.append(ill)
+            safes.append(safe)
+            deads.append(dead)
+            immunes.append(immune)
         redrawWin(people, win)
+        try:
+            if getInfo % end == 0 or ills[-1] == 0:
+                v = False
+        except:
+            pass
+    pygame.display.quit()
+    v = []
+    for i in range(getInfo//getInfoC):
+        v.append(getInfoC*i)
+    plt.plot(v, deads, 'g')
+    plt.plot(v, ills, 'r')
+    plt.plot(v, safes, 'y')
+    plt.plot(v, immunes, 'b')
+    plt.ylabel(f"people {len(people)}")
+    plt.xlabel(f"frames")
+    plt.show()
 
 
 if __name__ == '__main__':
