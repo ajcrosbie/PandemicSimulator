@@ -12,6 +12,7 @@ class person():
         self.illness = safety
         self.colour = (255, 255, 255)
         self.size = 4
+        self.illnessc = random.randrange(500, 2000)
 
     def move(self):
         for event in pygame.event.get():
@@ -31,7 +32,10 @@ class person():
             y = 0
         self.pos = (x, y)
         if self.illness == 'ill':
+            self.illnessc = self.illnessc-1
             self.colour = (255, 0, 0)
+            if self.illnessc == 0:
+                self.illness = 'immune'
         elif self.illness == 'immune':
             self.colour = (0, 0, 255)
 
